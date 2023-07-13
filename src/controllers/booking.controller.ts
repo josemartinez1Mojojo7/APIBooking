@@ -6,11 +6,8 @@ import { User } from '../entities/User';
 export const getBookings = async (req: Request, res: Response) => {
   try {
     const events = await Booking.find({
-      relations: {
-        user: true,
-        event: true,
-      },
-    });
+      relations: { user: true, event: true }
+    })
     return res.status(200).json(events)
   } catch (error) {
     if (error instanceof Error) {
@@ -22,9 +19,9 @@ export const getBooking = async (req:Request, res:Response) => {
   try {
     const { id } = req.params
     const booking = await Booking.findOne({
-      where: { id: parseInt(id)},
+      where: {id: parseInt(id)},
       relations: ['user','event']
-      })
+    })
     if(!booking) 
       return res.status(404).json({messagge:'Booking Not Found'})
     return res.status(200).json(booking)
@@ -40,8 +37,8 @@ export const createBooking = async (req:Request, res:Response) => {
   try {
     const event = await Event.findOneBy({id:parseInt(id_event)})
     const user = await User.findOneBy({id:parseInt(id_user)})
-    const booking = new Booking()
     if(event && user){
+      const booking = new Booking()
       booking.user = user
       booking.event = event
       booking.precio = event.precio
@@ -49,16 +46,9 @@ export const createBooking = async (req:Request, res:Response) => {
       booking.lugar = event.lugar
       booking.gps = event.gps
       const listBooking = await Booking.find({
-        relations: {
-          user: true,
-          event: true,
-        },
-        where:{
-          event:{
-            id:parseInt(id_event)
-          }
-        }
-        })
+        relations:{user: true, event: true},
+        where:{event:{ id:parseInt(id_event) }}
+      })
       if(listBooking.length < event.limite || event.limite == 0){
         await booking.save()
         return res.status(201).json(booking)
@@ -95,16 +85,9 @@ export const updateBooking = async (req:Request, res:Response) => {
       if(!event) 
         return res.status(404).json({messagge:'Event Not Exist'})
       const listBooking = await Booking.find({
-        relations: {
-          user: true,
-          event: true,
-        },
-        where:{
-          event:{
-            id:parseInt(id_event)
-          }
-        }
-        })
+        relations: {user: true, event: true,},
+        where:{event:{ id:parseInt(id_event) }}
+      })
       if(listBooking.length < event.limite || event.limite == 0){
         const booking = new Booking()
         booking.event=event
@@ -122,16 +105,9 @@ export const updateBooking = async (req:Request, res:Response) => {
     const event = await Event.findOneBy({id:parseInt(id_event)})
     if(event && user){
       const listBooking = await Booking.find({
-        relations: {
-          user: true,
-          event: true,
-        },
-        where:{
-          event:{
-            id:parseInt(id_event)
-          }
-        }
-        })
+        relations: {user: true, event: true},
+        where:{event:{ id:parseInt(id_event) }}
+      })
       if(listBooking.length < event.limite || event.limite == 0){
         const booking = new Booking()
         booking.user = user

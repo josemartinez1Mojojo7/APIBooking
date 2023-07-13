@@ -51,14 +51,17 @@ export const updateEvent = async (req:Request, res:Response) => {
     const event=await Event.findOneBy({id:parseInt(id)})
     if(!event) 
       return res.status(404).json({messagge: 'Event Not Found'})
-    const {fechaHora}=req.body
-    if(fechaHora){
-      const event = new Event()
-      event.fechaHora=new Date(req.body.fechaHora)
-      await Event.update({id: parseInt(id)}, event)
-      return res.sendStatus(204)
-    }  
-    await Event.update({id: parseInt(id)}, req.body)
+    const eventAux = new Event()
+    eventAux.nombre = req.body.nombre
+    eventAux.descripcion = req.body.descripcion
+    eventAux.lugar = req.body.lugar
+    if(req.body.fechaHora) 
+      eventAux.fechaHora=new Date(req.body.fechaHora)
+    eventAux.gps = req.body.gps
+    eventAux.precio = req.body.precio
+    eventAux.limite = req.body.limite
+    eventAux.tipoEvento = req.body.tipoEvento
+    await Event.update({id: parseInt(id)}, eventAux)
     return res.sendStatus(204)
   } catch (error) {
     if (error instanceof Error) {
