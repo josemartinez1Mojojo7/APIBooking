@@ -1,3 +1,4 @@
+import {URL_API} from './config'
 export const options = {
   definition: {
     openapi: "3.0.0",
@@ -8,7 +9,7 @@ export const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: URL_API,
       },
     ],
   },
