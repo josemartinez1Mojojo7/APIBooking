@@ -1,0 +1,189 @@
+paths:
+  /api/bookings/:
+    get:
+      security:
+        - Auth: []
+      summary: Obtiene todos los Bookings.
+      tags:
+        - Bookings
+      responses:
+        "200":
+          description: Los bookings se obtuvieron exitosamente de la BD.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Booking'
+        "401":
+          description: No Autorizado para Obtener los Bookings.
+        "500":
+          description: Error interno del servidor (query incorrecta o falla de conexion con la BD).
+    post:
+      security:
+        - Auth: []
+      summary: Guardar un Bookings.
+      tags:
+        - Bookings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/saveBooking'
+      responses:
+        "201":
+          description: Booking creado exitosamente.
+        "401":
+          description: No Autorizado para Guardar el Booking.
+        "404":
+          description: User o Event no existen.
+        "409":
+          description: limite de Event superado.
+        "500":
+          description: Error interno del servidor (query incorrecta o falla de conexion con la BD).  
+  /api/bookings/{bookingId}:
+    get:
+      security:
+        - Auth: []
+      summary: Obtiene un determinado Booking.
+      tags:
+        - Bookings
+      parameters:
+      - name: bookingId
+        in: path
+        required: true
+        description: id de Booking que se requiere
+        schema:
+          $type: number
+      responses:
+        "200":
+          description: El Booking se obtuvo exitosamente de la BD.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Booking'
+        "401":
+          description: No Autorizado para Obtener el Booking.
+        "404":
+          description: El Booking no fue encontrado.
+        "500":
+          description: Error interno del servidor (query incorrecta o falla de conexion con la BD).
+    put:
+      security:
+        - Auth: []
+      summary: Actualiza un determinado Booking
+      tags:
+        - Bookings
+      parameters:
+      - name: bookingId
+        in: path
+        required: true
+        description: id de Booking que se requiere
+        schema:
+          $type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateBooking'
+      responses:
+        "204":
+          description: El Booking se actualizo exitosamente en la BD.
+        "401":
+          description: No Autorizado para Actualizar el Booking.
+        "404":
+          description: El Booking no fue encontrado o (Event o User no fueron encontrado).
+        "409":
+          description: limite de Event superado.
+        "500":
+          description: Error interno del servidor (query incorrecta o falla de conexion con la BD).
+    delete:
+      security:
+        - Auth: []
+      summary: Eliminar un determinado Booking
+      tags:
+        - Bookings
+      parameters:
+      - name: bookingId
+        in: path
+        required: true
+        description: id de Booking que se requiere
+        schema:
+          $type: number
+      responses:
+        "204":
+          description: El Booking se elimino exitosamente de la BD.
+        "401":
+          description: No Autorizado para Eliminar el Booking.
+        "404":
+          description: El Booking no fue encontrado.
+        "500":
+          description: Error interno del servidor (query incorrecta o falla de conexion con la BD).
+components:
+  schemas:
+    Booking:
+      type: object
+      properties:
+        id: 
+          type: number
+          description: Id autogenerado por la BD.
+        event:
+          type: Event
+        user:
+          type: User
+        precio:
+          type: double
+        fechaHora:
+          type: Date
+        lugar:
+          type: string
+        gps:
+          type: '[]'
+        createdAt: 
+          type: Date
+        updatedAt: 
+          type: Date
+      example:
+        id: 5
+        precio: 549.99
+        fechaHora: '2023-11-12 18:00:00'
+        lugar: Arg, Juujuy, Grl. SUM N°4533
+        gps: ['-26431421', '-4531241']
+        createdAt: '2023-07-13'
+        updatedAt: '2023-07-13'
+        user: {}
+        event: {}
+  requestBodies:
+    saveBooking:
+      type: object
+      properties:  
+        id_event:
+          type: string
+          description: Id del Event.
+        id_user:
+          type: string
+          description: Id del Usuario.  
+      example:
+        id_event: 3
+        id_user: 2
+    updateBooking:
+      type: object
+      properties:  
+        id_event:
+          type: string
+          description: Id del Event.
+        id_user:
+          type: string
+          description: Id del Usuario.  
+      example:
+        id_event: 3
+        id_user: 2
+  securitySchemes:
+    Auth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    
